@@ -140,19 +140,6 @@ def validate_permissions_policy(value: str) -> Tuple[bool, Optional[str]]:
     
     return True, None
 
-def validate_xss_protection(value: str) -> Tuple[bool, Optional[str]]:
-    """Validate X-XSS-Protection header."""
-    if not value:
-        return False, "Header is empty"
-    
-    if value not in ["0", "1", "1; mode=block"]:
-        return False, f"Invalid value: {value}"
-    
-    if value == "1":
-        return False, "Value should be '1; mode=block' for better protection"
-    
-    return True, None
-
 def validate_cache_control(value: str) -> Tuple[bool, Optional[str]]:
     """Validate Cache-Control header."""
     if not value:
@@ -209,13 +196,6 @@ HEADERS_TO_CHECK = [
         risk_level="medium",
         validator=validate_permissions_policy,
         recommendation="camera=(), microphone=(), geolocation=(), interest-cohort=()"
-    ),
-    HeaderInfo(
-        name="X-XSS-Protection",
-        description="Enables cross-site scripting filtering in browsers",
-        risk_level="low",
-        validator=validate_xss_protection,
-        recommendation="1; mode=block"
     ),
     HeaderInfo(
         name="Cache-Control",
@@ -347,30 +327,6 @@ def get_status_symbol(is_present: bool, is_valid: bool) -> str:
 
 def display_results(url: str, redirect_chain: List[RedirectInfo], results: List[HeaderResult]):
     """Display analysis results in a nice format."""
-    # Calculate overall score
-    total_headers = len(results)
-    present_headers = sum(1 for r in results if r.is_present)
-    valid_headers = sum(1 for r in results if r.is_present and r.is_valid)
-    
-    score_percentage = (valid_headers / total_headers) * 100
-    
-    # Determine grade based on score
-    grade = "A+" if score_percentage == 100 else \
-            "A" if score_percentage >= 90 else \
-            "B" if score_percentage >= 80 else \
-            "C" if score_percentage >= 70 else \
-            "D" if score_percentage >= 60 else \
-            "F"
-    
-    grade_color = {
-        "A+": "bright_green",
-        "A": "green",
-        "B": "yellow",
-        "C": "yellow",
-        "D": "red",
-        "F": "bright_red"
-    }.get(grade, "white")
-    
     # Display header
     console.print(Panel(
         f"[bold]Security Headers Analysis for:[/bold] [cyan]{url}[/cyan]",
@@ -395,17 +351,6 @@ def display_results(url: str, redirect_chain: List[RedirectInfo], results: List[
             )
         
         console.print(Panel(redirect_table, title="[bold]Redirect Chain[/bold]", expand=False))
-    
-    # Display score
-    score_panel = Panel(
-        f"[bold {grade_color}]Grade: {grade}[/bold {grade_color}]\n"
-        f"Score: {score_percentage:.1f}%\n"
-        f"Headers Present: {present_headers}/{total_headers}\n"
-        f"Headers Properly Configured: {valid_headers}/{total_headers}",
-        title="[bold]Security Score[/bold]",
-        expand=False
-    )
-    console.print(score_panel)
     
     # Display detailed results
     results_table = Table(show_header=True, header_style="bold", box=box.ROUNDED)
