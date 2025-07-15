@@ -26,7 +26,6 @@ A comprehensive CLI tool to detect missing or misconfigured security headers in 
 
 ## Installation
 
-\`\`\`bash
 # Clone the repository
 git clone https://github.com/yourusername/security-headers-checker.git
 cd security-headers-checker
@@ -36,29 +35,24 @@ pip install -r requirements.txt
 
 # Make the script executable
 chmod +x security_headers_checker.py
-\`\`\`
 
 ## Usage
 
 ### Direct URL Check
 
-\`\`\`bash
 # Basic usage
 ./security_headers_checker.py check https://example.com
 
 # Disable redirect following
 ./security_headers_checker.py check https://example.com --no-follow-redirects
-\`\`\`
 
 ### Interactive Mode
 
-\`\`\`bash
 # Start interactive mode
 ./security_headers_checker.py interactive
 
 # Or just run without arguments
 ./security_headers_checker.py
-\`\`\`
 
 ## Requirements
 
